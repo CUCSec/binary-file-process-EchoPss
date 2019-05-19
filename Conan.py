@@ -1,12 +1,27 @@
 import struct
-
+import os
 
 def tamper(student_id):
-  pass
+  oname=os.path.abspath(__file__)
+  father_name=os.path.dirname(oname)
+  global full_name
+  full_name=os.path.join(father_name,"lenna.bmp")
+  with open(full_name, 'r+b') as f:
+    f.seek(54,0)
+    for i in range(12):
+      if(student_id[i]=='0'):
+        f.seek(3*10,1)
+      else:
+        f.seek(3*int(student_id[i]),1)
+      f.write(bytes(3))
+      f.seek(-3,1)
+  f.close()
+      
+
 
 
 def detect():
-  with open('lenna.bmp', 'rb') as f:
+  with open(full_name, 'rb') as f:
     bmp_file_header = f.read(14)
 
     bm, size, r1, r2, offset = struct.unpack('<2sIHHI', bmp_file_header)
@@ -29,6 +44,7 @@ def detect():
         last_offset = offset
         count -= 1
 
+      
       offset += 1
 
 
